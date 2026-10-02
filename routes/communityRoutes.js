@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import { asyncHandler as h } from '../middleware/asyncHandler.js';
+import { rateLimit } from '../middleware/rateLimit.js';
+import * as xp from '../services/xpService.js';
+import * as push from '../services/pushService.js';
+import { bySecret } from '../services/sectionService.js';
+const r = Router();
+r.get('/leaderboard', rateLimit(60, 60000), h((req, res) => res.json(xp.leaderboard(req.query.period === 'week' ? 'week' : 'all', req.query.limit))));
+r.get('/section/:secret', rateLimit(40, 60000), h((req, res) => res.json({ section: bySecret(req.params.secret) })));
+r.get('/push/key', h((_q, res) => res.json({ key: push.publicKey() })));
+r.post('/push/subscribe', rateLimit(20, 60000), h((req, res) => res.json(push.subscribe(req.body?.subscription))));
+r.post('/push/unsubscribe', rateLimit(20, 60000), h((req, res) => res.json(push.unsubscribe(req.body?.endpoint))));
+r.get('/announcements', h((_q, res) => res.json(push.recent())));
+export default r;

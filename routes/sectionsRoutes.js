@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { add, reorder, visibility, edit, remove, regen } from '../controllers/sectionsController.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
+const r = Router();
+r.post('/sections', asyncHandler(add));
+r.put('/sections/order', asyncHandler(reorder));
+r.put('/sections/:id/visibility', asyncHandler(visibility));
+r.put('/sections/:id', asyncHandler(edit));
+r.post('/sections/:id/secret', asyncHandler(regen));
+r.delete('/sections/:id', asyncHandler(remove));
+export default r;

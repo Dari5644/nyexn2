@@ -1,0 +1,6 @@
+export const AREAS = ['control', 'branding', 'sections', 'kick', 'socials', 'buttons', 'achievements', 'design', 'lists', 'mods', 'bot', 'chat', 'discord', 'security', 'backup', 'notifications', 'media', 'community', 'history'];
+export const KEY_AREA = { branding: 'branding', kick: 'kick', maintenance: 'control', panic: 'control', ticker: 'control', goals: 'control', stream: 'control', socials: 'socials', buttons: 'buttons', achievements: 'achievements', donations: 'lists', gifters: 'lists', regulars: 'lists', commands: 'lists', quickLinks: 'lists', sections: 'sections', discord: 'discord', bot: 'bot', mods: 'mods', xp: 'community', notify: 'notifications' };
+const MAP = [[/^\/sections/, 'sections'], [/^\/mods/, 'mods'], [/^\/bot/, 'bot'], [/^\/discord/, 'discord'], [/^\/security/, 'security'], [/^\/(backup|versions)/, 'backup'], [/^\/kick/, 'kick'], [/^\/commands/, 'lists'], [/^\/maintenance/, 'control'],
+  [/^\/history/, 'history'], [/^\/design/, 'design'], [/^\/media/, 'media'], [/^\/notifications/, 'notifications'], [/^\/xp/, 'community'], [/^\/staff/, 'staff'], [/^\/config/, 'config'], [/^\/(upload|assets)/, 'upload']];
+export const areaOf = path => (MAP.find(([re]) => re.test(path)) || [])[1];
+export const cleanPerms = p => Object.fromEntries(Object.entries(p || {}).filter(([k, v]) => AREAS.includes(k) && ['view', 'edit'].includes(v)));

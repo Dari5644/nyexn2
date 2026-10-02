@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { visitors, stats, bans, ban, unban, myIp } from '../controllers/securityController.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
+const r = Router();
+r.get('/security/visitors', asyncHandler(visitors));
+r.get('/security/stats', asyncHandler(stats));
+r.get('/security/bans', asyncHandler(bans));
+r.get('/security/my-ip', asyncHandler(myIp));
+r.post('/security/ban', asyncHandler(ban));
+r.delete('/security/ban', asyncHandler(unban));
+export default r;

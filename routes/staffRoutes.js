@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import * as c from '../controllers/staffController.js';
+import { asyncHandler as h } from '../middleware/asyncHandler.js';
+const r = Router();
+r.get('/me', h(c.me));
+r.get('/staff/me/kick-url', h(c.kickUrl));
+r.get('/staff', h(c.list));
+r.post('/staff', h(c.create));
+r.put('/staff/:id', h(c.update));
+r.delete('/staff/:id', h(c.remove));
+r.get('/staff/:id/devices', h(c.devices));
+r.put('/staff/devices/:id', h(c.setDevice));
+r.get('/staff-audit', h(c.auditList));
+export default r;

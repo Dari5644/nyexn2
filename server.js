@@ -1,0 +1,17 @@
+import http from 'http';
+import { env } from './config/env.js';
+import app from './app.js';
+import * as hub from './ws/hub.js';
+import { getPublic } from './services/configService.js';
+import * as live from './services/liveService.js';
+import { startTimers } from './services/botService.js';
+import { start as startDiscord } from './services/discordBot.js';
+import { pruneOld } from './services/securityService.js';
+import { logger } from './utils/logger.js';
+const server = http.createServer(app);
+hub.attach(server, getPublic);
+live.start();
+startTimers();
+startDiscord();
+setInterval(pruneOld, 6 * 3600 * 1000); pruneOld();
+server.listen(env.port, () => logger.info(`nyexn2 backend listening on :${env.port}`));

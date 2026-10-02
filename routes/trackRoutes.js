@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { enter, heartbeat, leave } from '../controllers/trackController.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
+import { rateLimit } from '../middleware/rateLimit.js';
+const r = Router();
+r.use('/track', rateLimit(120, 60000));
+r.post('/track/enter', asyncHandler(enter));
+r.post('/track/heartbeat', asyncHandler(heartbeat));
+r.post('/track/leave', asyncHandler(leave));
+export default r;
