@@ -1,0 +1,14 @@
+import * as a from '../services/discordAdminService.js';
+import { getFull } from '../services/configService.js';
+export const status = (_q, res) => res.json(a.status());
+export const info = async (_q, res) => res.json(await a.guildInfo());
+export const getSettings = (_q, res) => res.json(getFull().discord);
+export const putSettings = (req, res) => res.json(a.saveSettings(req.body || {}));
+export const send = async (req, res) => res.json(await a.sendMessage(req.body || {}));
+export const panel = async (_q, res) => res.json(await a.postTicketPanel());
+export const moderate = async (req, res) => res.json(await a.moderate(req.body || {}));
+export const logs = (req, res) => res.json(a.logs(req.query));
+export const clearLogs = (_q, res) => res.json(a.clearLogs());
+export const tickets = (_q, res) => res.json(a.tickets());
+export const closeTicket = async (req, res) => res.json(await a.closeTicketById(req.params.id));
+export const testAnnounce = async (_q, res) => res.json(await a.testAnnounce());

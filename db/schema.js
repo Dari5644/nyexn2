@@ -1,0 +1,23 @@
+export function applySchema(db) {
+  db.pragma('journal_mode = WAL');
+  db.exec(`
+  CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+  CREATE TABLE IF NOT EXISTS snapshots (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL DEFAULT (datetime('now')), label TEXT NOT NULL, data TEXT NOT NULL);
+  CREATE TABLE IF NOT EXISTS assets (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT NOT NULL UNIQUE, original TEXT NOT NULL, mime TEXT NOT NULL, size INTEGER NOT NULL, kind TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')));
+  CREATE TABLE IF NOT EXISTS visitors (id INTEGER PRIMARY KEY AUTOINCREMENT, sid TEXT NOT NULL UNIQUE, ip TEXT NOT NULL, ua TEXT, device TEXT, os TEXT, browser TEXT, path TEXT, lang TEXT, referrer TEXT, entered_at INTEGER NOT NULL, last_seen INTEGER NOT NULL, left_at INTEGER);
+  CREATE INDEX IF NOT EXISTS idx_visitors_ip ON visitors(ip);
+  CREATE INDEX IF NOT EXISTS idx_visitors_entered ON visitors(entered_at);
+  CREATE TABLE IF NOT EXISTS ip_bans (ip TEXT PRIMARY KEY, reason TEXT, banned_at INTEGER NOT NULL);
+  CREATE TABLE IF NOT EXISTS discord_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, type TEXT NOT NULL, user_id TEXT, user_name TEXT, channel_id TEXT, content TEXT);
+  CREATE INDEX IF NOT EXISTS idx_dlogs_type ON discord_logs(type);
+  CREATE TABLE IF NOT EXISTS tickets (id INTEGER PRIMARY KEY AUTOINCREMENT, channel_id TEXT UNIQUE, user_id TEXT NOT NULL, user_name TEXT, status TEXT NOT NULL DEFAULT 'open', opened_at INTEGER NOT NULL, closed_at INTEGER, closed_by TEXT);
+  CREATE TABLE IF NOT EXISTS staff (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE COLLATE NOCASE, pass_hash TEXT NOT NULL, perms TEXT NOT NULL DEFAULT '{}', disabled INTEGER NOT NULL DEFAULT 0, waive_kick INTEGER NOT NULL DEFAULT 0, kick_user_id TEXT, kick_name TEXT, created_at INTEGER NOT NULL, created_by TEXT, last_login INTEGER);
+  CREATE TABLE IF NOT EXISTS staff_devices (id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, dhash TEXT NOT NULL, ua TEXT, ip TEXT, first_seen INTEGER NOT NULL, last_seen INTEGER NOT NULL, trusted INTEGER NOT NULL DEFAULT 0, revoked INTEGER NOT NULL DEFAULT 0, logins INTEGER NOT NULL DEFAULT 1, UNIQUE(staff_id, dhash));
+  CREATE TABLE IF NOT EXISTS audit_log (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, actor TEXT, role TEXT, action TEXT NOT NULL, target TEXT, detail TEXT, ip TEXT);
+  CREATE TABLE IF NOT EXISTS field_history (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, actor TEXT, role TEXT, label TEXT, path TEXT NOT NULL, old_json TEXT, new_json TEXT);
+  CREATE INDEX IF NOT EXISTS idx_fh_path ON field_history(path);
+  CREATE TABLE IF NOT EXISTS xp (user_id TEXT PRIMARY KEY, username TEXT, avatar TEXT, color TEXT, xp INTEGER NOT NULL DEFAULT 0, messages INTEGER NOT NULL DEFAULT 0, week_key TEXT, week_xp INTEGER NOT NULL DEFAULT 0, last_at INTEGER);
+  CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, title TEXT NOT NULL, body TEXT, url TEXT, actor TEXT);
+  CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, p256dh TEXT NOT NULL, auth TEXT NOT NULL, created_at INTEGER NOT NULL);
+  `);
+}
